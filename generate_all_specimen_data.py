@@ -1,10 +1,7 @@
 import os
-from re import sub
 import commonTools
 import customizedYaml
-import csv
 import cv2
-from pathlib import Path
 from generate_all_slides import decode_img_data, output_file
 import multiprocessing
 from functools import partial
