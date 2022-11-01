@@ -14,6 +14,7 @@ Opeartions I want to do:
     1. Get the error record using the record file.
     2. Change the record's status code to the corresponding error type in the original record file.
     3. Export the error files in 'Export' folder for reference.
+This is an experimental script to investigate the python mysql connector.
 '''
 
 config = {
@@ -25,17 +26,22 @@ config = {
 
 def copy_to_dest(error_path, base_path, export_path):
     export_error_path = export_path+error_path#os.path.join(export_path, error_path)
+    if Path(export_error_path).suffix == '.tif':
+        export_error_path = export_error_path.replace("Grid_images", "pseudo_annotation\\pascal_voc")
     p = PurePath(export_error_path).parents[0]
     Path(p).mkdir(parents=True, exist_ok=True)
     source_path = base_path+error_path#os.path.join(base_path, error_path)
     shutil.copy(source_path, export_error_path)
 
 def retrive_existing_error(cnx, base_path, export_path):
+    '''
+    get the updated result from the DB.
+    '''
     get_query = ("select grid_path, annotation_path "
                  "from grid_data, grid_annotations "
                  "where status_code = 2 "
                  "and grid_data.grid_id = grid_annotations.grid_id "
-                 "and annotation_type != 'pseudo';")
+                 "and annotation_type = 'pseudo';")
     cur = cnx.cursor()
     cur.execute(get_query)
     all_errors = cur.fetchall()
